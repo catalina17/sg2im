@@ -123,7 +123,7 @@ class GraphTripleConv(nn.Module):
 class GraphTripleConvNet(nn.Module):
   """ A sequence of scene graph convolution layers  """
   def __init__(self, input_dim, num_layers=5, hidden_dim=512, pooling='avg',
-               mlp_normalization='none'):
+               mlp_normalization='none', output_dim=128):
     super(GraphTripleConvNet, self).__init__()
 
     self.num_layers = num_layers
@@ -134,7 +134,9 @@ class GraphTripleConvNet(nn.Module):
       'pooling': pooling,
       'mlp_normalization': mlp_normalization,
     }
-    for _ in range(self.num_layers):
+    for i in range(self.num_layers):
+      if i == self.num_layers - 1:
+        gconv_kwargs['output_dim'] = output_dim
       self.gconvs.append(GraphTripleConv(**gconv_kwargs))
 
   def forward(self, obj_vecs, pred_vecs, edges):
